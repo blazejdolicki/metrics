@@ -163,14 +163,11 @@ class Dice(Metric):
         self.ignore_index = ignore_index
         self.top_k = top_k
 
-        if average not in ["micro", "macro", "samples"]:
-            raise ValueError(f"The `reduce` {average} is not valid.")
-
         if mdmc_average not in [None, "samplewise", "global"]:
             raise ValueError(f"The `mdmc_reduce` {mdmc_average} is not valid.")
 
-        if average == "macro" and (not num_classes or num_classes < 1):
-            raise ValueError("When you set `average` as 'macro', you have to provide the number of classes.")
+        if average in ["macro", "weighted", "none", None] and (not num_classes or num_classes < 1):
+            raise ValueError(f"When you set `average` as '{average}', you have to provide the number of classes.")
 
         if num_classes and ignore_index is not None and (not ignore_index < num_classes or num_classes == 1):
             raise ValueError(f"The `ignore_index` {ignore_index} is not valid for inputs with {num_classes} classes")
@@ -180,7 +177,7 @@ class Dice(Metric):
         if mdmc_average != "samplewise" and average != "samples":
             if average == "micro":
                 zeros_shape = []
-            elif average == "macro":
+            elif average in ["macro", "weighted", "none", None]:
                 zeros_shape = [num_classes]
             else:
                 raise ValueError(f'Wrong reduce="{average}"')

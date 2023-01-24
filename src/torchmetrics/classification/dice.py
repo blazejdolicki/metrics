@@ -150,12 +150,8 @@ class Dice(Metric):
             raise ValueError(f"The `average` has to be one of {allowed_average}, got {average}.")
 
         _reduce_options = (AverageMethod.WEIGHTED, AverageMethod.NONE, None)
-        if "reduce" not in kwargs:
-            kwargs["reduce"] = AverageMethod.MACRO if average in _reduce_options else average
-        if "mdmc_reduce" not in kwargs:
-            kwargs["mdmc_reduce"] = mdmc_average
 
-        self.reduce = average
+        self.reduce = AverageMethod.MACRO if average in _reduce_options else average
         self.mdmc_reduce = mdmc_average
         self.num_classes = num_classes
         self.threshold = threshold
